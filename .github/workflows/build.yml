@@ -1,38 +1,23 @@
 name: Build ESP32 CYD Firmware
-
 on:
   push:
-    branches:
-      - main
-
+    branches: [ main, master ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-
+          python-version: '3.x'
       - name: Install PlatformIO
         run: pip install platformio
-
-      - name: Build firmware
-        run: pio run
-
+      - name: Build
+        run: pio run -e esp32-cyd
       - name: Prepare firmware
-        run: |
-          mkdir -p firmware
-          cp .pio/build/esp32dev/firmware.bin firmware/aquarium-controller.bin
-
-      - name: Upload firmware
-        uses: actions/upload-artifact@v4
+        run: cp .pio/build/esp32-cyd/firmware.bin aquarium-controller.bin
+      - uses: actions/upload-artifact@v4
         with:
-          name: Aquarium-Controller-Firmware
-          path: firmware/aquarium-controller.bin
+          name: aquarium-controller-firmware
+          path: aquarium-controller.bin
